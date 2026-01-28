@@ -2,7 +2,8 @@ import unittest
 import re
 from textnode import TextNode, TextType, text_node_to_html_node
 from htmlnode import HTMLNode, LeafNode, ParentNode
-from inline_markdown import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link
+from inline_markdown import extract_markdown_images, extract_markdown_links, split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -46,6 +47,8 @@ class TestTextNode(unittest.TestCase):
     def test_extract_markdown_images(self):
         matches = extract_markdown_images("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)")
         self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+   
         
 if __name__ == "__main__":
     unittest.main()
