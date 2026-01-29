@@ -14,13 +14,9 @@ def main():
         basepath = "/"
 
     file_prep("docs")
-    #file_prep("public")
     file_copy("static", "docs")
-    #file_copy("static", "public")
     generate_page("content/index.md", "template.html", "docs/index.html", basepath)
-    #generate_page("content/index.md", "template.html", "public/index.html", basepath)
     dir_list = get_directory_list("content", "docs")
-    #dir_list = get_directory_list("content", "public")
     for src, dst in dir_list:
         generate_page(src, "template.html", dst, basepath)
 
@@ -38,8 +34,6 @@ def get_directory_list(src_dir, dst_dir):
             src_path.extend(get_directory_list(src, dst)) 
     return src_path
 
-
-
 def generate_page(from_path, template_path, dest_path, base_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, "r") as f:
@@ -50,8 +44,8 @@ def generate_page(from_path, template_path, dest_path, base_path):
     title = extract_title(markdown)
     page = template.replace("{{ Title }}", title)
     page = page.replace("{{ Content }}", content)
-    page = page.replace('href="/"', 'href="{basepath}"')
-    page = page.replace('src= "/"', 'src="{basepath}"')
+    page = page.replace('href="/"', f'href="{base_path}"')
+    page = page.replace('src= "/"', f'src="{base_path}"')
     dirpath = os.path.dirname(dest_path)
     if dirpath != "":
         os.makedirs(dirpath, exist_ok=True)
