@@ -1,18 +1,28 @@
 
 import os
 import shutil
+import sys
 from textnode import TextType, TextNode
 from htmlnode import HTMLNode, ParentNode, LeafNode
 from markdown_blocks import markdown_to_blocks, BlockType, block_to_block_type, markdown_to_html_node, paragraph_block_to_html, Olist_block_to_html, Ulist_block_to_html, quote_block_to_html, code_block_to_html, heading_block_to_html, text_to_children, extract_title
 
 
 def main():
-    file_prep("public")
-    file_copy("static", "public")
-    generate_page("content/index.md", "template.html", "public/index.html")
-    dir_list = get_directory_list("content", "public")
+    if len(sys.argv) > 0:
+        basepath = sys.argv[1]
+    else: 
+        basepath = "/"
+
+    file_prep("docs")
+    #file_prep("public")
+    file_copy("static", "docs")
+    #file_copy("static", "public")
+    generate_page("content/index.md", "template.html", "docs/index.html", basepath)
+    #generate_page("content/index.md", "template.html", "public/index.html", basepath)
+    dir_list = get_directory_list("content", "docs")
+    #dir_list = get_directory_list("content", "public")
     for src, dst in dir_list:
-        generate_page(src, "template.html", dst)
+        generate_page(src, "template.html", dst, basepath)
 
 
 def get_directory_list(src_dir, dst_dir):
@@ -30,7 +40,7 @@ def get_directory_list(src_dir, dst_dir):
 
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, base_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, "r") as f:
         markdown = f.read()
@@ -40,6 +50,8 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown)
     page = template.replace("{{ Title }}", title)
     page = page.replace("{{ Content }}", content)
+    page = page.replace('href="/"', 'href="{basepath}"')
+    page = page.replace('src= "/"', 'src="{basepath}"')
     dirpath = os.path.dirname(dest_path)
     if dirpath != "":
         os.makedirs(dirpath, exist_ok=True)
