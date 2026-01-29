@@ -1,5 +1,5 @@
 import unittest
-from markdown_blocks import markdown_to_blocks, BlockType, block_to_block_type, markdown_to_html_node, paragraph_block_to_html, Olist_block_to_html, Ulist_block_to_html, quote_block_to_html, code_block_to_html, heading_block_to_html, text_to_children
+from markdown_blocks import markdown_to_blocks, BlockType, block_to_block_type, markdown_to_html_node, paragraph_block_to_html, Olist_block_to_html, Ulist_block_to_html, quote_block_to_html, code_block_to_html, heading_block_to_html, text_to_children, extract_title
 
 
 class TestMarkdownToHTML(unittest.TestCase):

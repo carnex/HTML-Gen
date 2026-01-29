@@ -134,3 +134,10 @@ def text_to_children(text):
         children.append(text_node_to_html_node(node))
     return children
 
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    for line in lines:
+        stripped = line.lstrip()
+        if stripped.startswith("# "):
+            return stripped[2:].strip()
+    raise Exception("h1 header not found")
