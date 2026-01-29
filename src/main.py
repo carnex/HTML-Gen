@@ -8,7 +8,7 @@ from markdown_blocks import markdown_to_blocks, BlockType, block_to_block_type, 
 
 
 def main():
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         basepath = sys.argv[1]
     else: 
         basepath = "/"
@@ -44,8 +44,8 @@ def generate_page(from_path, template_path, dest_path, base_path):
     title = extract_title(markdown)
     page = template.replace("{{ Title }}", title)
     page = page.replace("{{ Content }}", content)
-    page = page.replace('href="/"', f'href="{base_path}"')
-    page = page.replace('src= "/"', f'src="{base_path}"')
+    page = page.replace('href="/', f'href="{base_path}')
+    page = page.replace('src="/', f'src="{base_path}')
     dirpath = os.path.dirname(dest_path)
     if dirpath != "":
         os.makedirs(dirpath, exist_ok=True)
