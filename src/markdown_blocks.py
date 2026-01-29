@@ -1,6 +1,6 @@
 from enum import Enum
 from htmlnode import HTMLNode, ParentNode, LeafNode
-from textnode import TextNode, text_node_to_html_node
+from textnode import TextNode, TextType,text_node_to_html_node
 from inline_markdown import text_to_textnodes
 
 class BlockType(Enum):
@@ -51,19 +51,20 @@ def markdown_to_html_node(markdown):
     children = []
     blocks = markdown_to_blocks(markdown)
     for block in blocks:
-        if block_to_block_type(block) ==  "heading":
+        btype = block_to_block_type(block)
+        if btype == BlockType.HEADING:
             children.append(heading_block_to_html(block))
-        if block_to_block_type(block) == "code":
+        if btype == BlockType.CODE:
             children.append(code_block_to_html(block))
-        if block_to_block_type(block) == "quote":
+        if btype == BlockType.QUOTE:
             children.append(quote_block_to_html(block))
-        if block_to_block_type(block) =="unordered_list":
+        if btype == BlockType.ULIST:
             children.append(Ulist_block_to_html(block))
-        if block_to_block_type(block) == "ordered_list":
+        if btype == BlockType.OLIST:
             children.append(Olist_block_to_html(block))
-        if block_to_block_type(block) == "paragraph":
+        if btype == BlockType.PARAGRAPH:
             children.append(paragraph_block_to_html(block))
-    return HTMLNode("div", children=children)
+    return ParentNode("div", children=children)
 
 def paragraph_block_to_html(block):
         lines = block.split("\n")
@@ -74,7 +75,7 @@ def paragraph_block_to_html(block):
                 joined_parts.append(stripped)
         joined = " ".join(joined_parts)
         children = text_to_children(joined)
-        return HTMLNode("p", children=children)
+        return ParentNode("p", children=children)
 
 def Olist_block_to_html(block):
     child_nodes = []
@@ -82,8 +83,8 @@ def Olist_block_to_html(block):
     for line in lines:
         dot_index = line.find(".")
         stripped = line[dot_index + 1:].lstrip()
-        child_nodes.append(HTMLNode("li", children=text_to_children(stripped)))
-        return HTMLNode("ol", children=child_nodes)
+        child_nodes.append(ParentNode("li", children=text_to_children(stripped)))
+        return ParentNode("ol", children=child_nodes)
 
 def Ulist_block_to_html(block):
     child_nodes = []
@@ -91,8 +92,8 @@ def Ulist_block_to_html(block):
     for line in lines:
         if line.startswith("- ") or line.startswith("* "):
             stripped = line[2:].lstrip()
-            child_nodes.append(HTMLNode("li", children=text_to_children(stripped)))
-    return HTMLNode("ul", children=child_nodes)
+            child_nodes.append(ParentNode("li", children=text_to_children(stripped)))
+    return ParentNode("ul", children=child_nodes)
         
 def quote_block_to_html(block):
     formatted = []
@@ -101,16 +102,16 @@ def quote_block_to_html(block):
         formatted.append(line[1:].lstrip())
     text = " ".join(formatted)
     children = text_to_children(text)
-    node = HTMLNode("blockquote", children=children)
+    node = ParentNode("blockquote", children=children)
     return node
 
 def code_block_to_html(block):
     lines = block.split("\n")
     inner_lines = lines[1:-1]
     code_text = "\n".join(inner_lines) + "\n"
-    code_leaf = TextNode(code_text, "code")
+    code_leaf = TextNode(code_text, TextType.CODE)
     code_child = text_node_to_html_node(code_leaf) 
-    pre_node = HTMLNode("pre", children=[code_child])
+    pre_node = ParentNode("pre", children=[code_child])
     return pre_node
 
 def heading_block_to_html(block):
@@ -125,7 +126,7 @@ def heading_block_to_html(block):
     prepped = first_line.lstrip("#").strip()
     tag = "h" + str(level)
     child = text_to_children(prepped)
-    return HTMLNode(tag,children=child)
+    return ParentNode(tag,children=child)
         
 def text_to_children(text):
     children = []
